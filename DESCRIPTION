@@ -1,0 +1,12 @@
+Package: ViralExamR
+Type: Package
+Title: Host-Based Viral Sequence Exam Exercises
+Version: 0.0.0.9000
+Authors@R: person("Ria", role = c("aut", "cre"), email = "ria@example.org")
+Description: Provides a teaching scaffold for choosing a host, loading supplied
+    viral sequences, aligning sequences, and summarizing pairwise identity.
+    Sequence provenance and exercise content should be reviewed by the instructor.
+License: GPL-3
+Encoding: UTF-8
+Suggests: Biostrings, msa, ape, phangorn
+Imports: methods

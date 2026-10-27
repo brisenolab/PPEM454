@@ -1,0 +1,5 @@
+# Maintained manually; may be regenerated with roxygen2 later.
+export(choose_host)
+export(get_sequences)
+export(align_sequences)
+export(sequence_similarity)
