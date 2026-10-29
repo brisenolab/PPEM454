@@ -7,9 +7,12 @@
 
 Run both scripts and answer all **20 questions and the bonus question** based on your results.
 
-You may write your answers directly in the R scripts as comments, after editing, save the script as Last_name_MidterII_date.R turn it into Canvas or send me an email to ria5282@psu.edu. 
+_You may submit your answers in either of the following formats:_
 
-If you opt to use a Word document, it must be **electronic Word with version history.** Use electronic word that records your editing history, and ensure that this history is accessible when you submit your work. Submissions without accessible version history in word will not be graded. Share the document to ria5282@psu.edu.
+- **R scripts:** Write your answers directly in the scripts as comments. Save each script as `LastName_MidtermII_Part1_DATE.R` or `LastName_MidtermII_Part2_DATE.R`. Submit both files through Canvas or email them to ria5282@psu.edu.
+
+- **Word document:** Copy the questions from the script in an online Microsoft Word document with version history enabled. Share the document with ria5282@psu.edu and ensure that its version history is accessible. 
+Word submissions without accessible version history will not be graded.
 
 **Do not use AI tools to complete any part of this exam.**
 
