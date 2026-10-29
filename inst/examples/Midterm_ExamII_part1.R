@@ -7,11 +7,20 @@
 
 # 1. Load the current package functions ---------------------------------------
 
-package_dir <- "/Users/ria/git_local/PPEM454/"
-for (script in c("choose_host.R", "get_sequences.R", "align_sequences.R",
-                 "sequence_similarity.R", "kmers.R")) {
-  source(file.path(package_dir, "R", script))
-}
+# Install pak (only needed once)
+install.packages("pak")
+
+# Install the package from GitHub
+pak::pak("brisenolab/PPEM454")
+
+# Load the package in each new R session
+library(ViralExamR)
+
+# package_dir <- "/Users/ria/git_local/PPEM454/"
+# for (script in c("choose_host.R", "get_sequences.R", "align_sequences.R",
+#                  "sequence_similarity.R", "kmers.R")) {
+#   source(file.path(package_dir, "R", script))
+# }
 
 # Alternatively, after installing the package, use library(ViralExamR).
 
@@ -24,12 +33,13 @@ install.packages("phangorn") # only for the optional ML section
 library("Biostrings")
 library("msa")
 library("ape")
+library("phangorn")
 
 # 2. Choose a host and load up to eight existing sequences --------------------
 host <- choose_host()      # interactive menu alternative
 
 # load sequences from your selected host
-sequences <- get_sequences(host, data_dir = file.path(package_dir, "data"))
+sequences <- get_sequences(host)
 # print the name of your sequences and lenght
 print(data.frame(sequence = names(sequences), length = nchar(sequences)))
 
