@@ -1,4 +1,4 @@
-# Midterm II: Sequence diversity, phylogenies and diversity indices/
+# Midterm II: Sequence diversity, phylogenies and diversity indices
 
 ## This exam consists of two R scripts:
 
