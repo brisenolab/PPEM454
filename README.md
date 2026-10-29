@@ -1,41 +1,47 @@
-# ViralExamR
+# Midterm II: Sequence diversity, phylogenies and diversity indices/
 
-Editable teaching package scaffold. Main functions are in `R/`.
+## This exam consists of two R scripts:
+
+- **Part 1:** Sequence alignment and phylogenetic analysis.
+- **Part 2:** Diversity indices.
+
+Run both scripts and answer all **20 questions and the bonus question** based on your results.
+
+You may write your answers directly in the R scripts as comments, after editing, save the script as Last_name_MidterII_date.R turn it into Canvas or send me an email to ria5282@psu.edu. 
+
+If you opt to use a Word document, it must be **electronic Word with version history.** Use electronic word that records your editing history, and ensure that this history is accessible when you submit your work. Submissions without accessible version history in word will not be graded. Share the document to ria5282@psu.edu.
+
+**Do not use AI tools to complete any part of this exam.**
 
 ```r
+install.packages("devtools")
+library("devtools")
+# Installing hoboR through devtools
+devtools::install_github("brisenolab/PPEM454")
+library(PPEM454)
+
 # After installing locally with R CMD INSTALL /path/to/ViralExamR:
-library(ViralExamR)
-host <- choose_host("human") # choose_host() prompts interactively
-sequences <- get_sequences(host, n = 8)
-# Optional: BiocManager::install(c("Biostrings", "msa"))
-alignment <- align_sequences(sequences)
-sequence_similarity(alignment)
+library(PPEM454) # to load the commands for the exam
+# PPEM454 functions:
+choose_host.R()
+get_sequences.R()
+align_sequences.R()
+sequence_similarity.R()
+kmers.R()
+incidence_matrix()
+
+# Install these packages:
+install.packages(c("BiocManager", "ape"))
+BiocManager::install(c("Biostrings", "msa"))
+install.packages(c("phangorn", "vegan", "ggplot2", "tidyr"))
+
+# load libraries
+library("Biostrings")
+library("msa")
+library("ape")
+library(vegan)
+library(ggplot2)
+library(tidyr)
 ```
 
-Existing filenames identify the host mapping: human, animal, fungal -> fungus,
-phage -> bacteria, and plant. No sequences were invented. This mapping follows
-the supplied filenames; source provenance and biological suitability have not
-been independently verified. Loading selects the first 2–8 available records.
-Review accessions, homologous regions, lengths, and expected answers before use.
-The animal file contains RNA U; some files have gaps and ambiguous bases.
-Alignment converts U to T and strips pre-existing gaps on an in-memory copy.
-Similarity excludes gaps and ambiguities pairwise; overall is the mean identity
-of unique pairs, in percent. These definitions can be edited for your exam.
 
-Original teaching scripts were moved unchanged to `inst/legacy-scripts/` because
-they install dependencies and run analyses at top level. Adapt their functions
-into `R/` as needed. Original FASTA files remain in `data/`, with installable
-copies in `inst/extdata/`. Existing `outputs/` is preserved but excluded from builds.
-
-Before distribution: replace the placeholder author email in DESCRIPTION,
-confirm GPL-3 is appropriate for your material, and review sequence provenance.
-The minimal NAMESPACE is maintained manually. Roxygen comments are supplied for
-future documentation generation. Base-R checks live in `tests/smoke.R`.
-
-## Complete editable example
-
-Open `inst/examples/host_sequence_workflow.R` and run it section by section.
-It sources the current R/ scripts, loads supplied sequences, aligns them,
-summarizes identity, builds an unrooted Neighbor-Joining tree using JC distances,
-and saves alignment, tables, Newick tree, and PDF into a new outputs/ folder.
-An optional Maximum-Likelihood section uses phangorn with the K80 model.
