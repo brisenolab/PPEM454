@@ -8,13 +8,14 @@
 # Run once if needed:
 install.packages(c("vegan", "ggplot2", "tidyr"))
 
+library(ViralExamR)
 library(vegan)
 library(ggplot2)
 library(tidyr)
 
 # 1. Choose a seed number: more than 4 random numbers 
 # Q1. Write down your seed number: _________________
-seed =   # after equal, type those random numbers
+seed =  999 # after equal, type those random numbers
 
 # 2. Create incidence matrix for viruses (as rows), samples (as columns)
 inc_matrix <- create_incidence_matrix(10, 8, seed = seed)

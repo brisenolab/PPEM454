@@ -38,6 +38,8 @@ library("phangorn")
 # 2. Choose a host and load up to eight existing sequences --------------------
 host <- choose_host()      # interactive menu alternative
 
+# Q0 type your selected host:
+# __________________________
 # load sequences from your selected host
 sequences <- get_sequences(host)
 # print the name of your sequences and lenght
@@ -148,14 +150,14 @@ plot(
   tree_ml,
   main = "Maximum-Likelihood phylogeny",
   edge.width = 2,
-  cex = 1.1
+  cex = .8
 )
 # Add bootstrap support
 nodelabels(
   text = bsml$BP,
   node = (Ntip(tree_ml) + 1):(Ntip(tree_ml) + tree_ml$Nnode),
   frame = "none",
-  cex = 0.9,
+  cex = 0.7,
   adj = c(-0.2, -0.2),
   col = "red"
 )
@@ -176,9 +178,9 @@ add.scale.bar(0.75, 1)
 
 # 8. k-mers. Describe the properties of k-mers.
 k=3
-# select the highest divergence sequences 
+# select the highest divergent sequences 
 # go to line 63 and View() the identity_matrix
-kmers_spp <- count_kmers(sequences[c(1,8)], k)
+kmers_spp <- count_kmers(sequences[c( , )], k)
 
 # 9. Comparing two different strains
 # Plot frequency distributions
