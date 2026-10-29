@@ -115,11 +115,11 @@ print(Alpha_diversity_results)
 
 # 3. Plot richness and diversity indices
 boxplot(
-  results$Richness,
-  results$Shannon,
-  results$Simpson,
-  results$Inverse_Simpson,
-  results$Evenness,
+  Richness,
+  Shannon,
+  Simpson,
+  Inverse_Simpson,
+  Evenness,
   names = c("Richness", "Shannon", "Simpson", "Inverse Simpson", "Evennes"),
   ylab = "Index value",
   main = "Viral alpha diversity",
@@ -229,7 +229,7 @@ ggplot(composition_long, aes(x = Sample, y = Proportion, fill = Virus))+
 # let's check the documentation, and select a different method and write it 
 # down between the " " in line 193.
 ?vegdist
-other_index <- vegdist(community, method = "chao")
+other_index <- vegdist(community, method = " ")
 other_index_matrix <- as.matrix(other_index)
 
 # Remove self-comparisons (distance to itself = 0)
