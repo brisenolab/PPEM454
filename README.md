@@ -16,8 +16,10 @@ Word submissions without accessible version history will not be graded.
 
 **Do not use AI tools to complete any part of this exam.**
 
-```r
 
+### INSTALLATION
+```r
+############## FOR MAC USERS
 # Install pak (only needed once)
 install.packages("pak")
 
@@ -27,6 +29,31 @@ pak::pak("brisenolab/PPEM454")
 # Load the package in each new R session
 library(ViralExamR)
 
+########## FOR MAC USERS WITHOUT XCODE
+# Install devtools (only needed once)
+install.packages("devtools")
+
+# Install the package from GitHub
+devtools::devtools_github("brisenolab/PPEM454")
+# Load the package in each new R session
+library(ViralExamR)
+
+############## FOR WINDOWS USERS
+# Install remotes (only needed once)
+install.packages("remotes")
+
+# Install the package from GitHub
+remotes::install_url(
+  "https://github.com/brisenolab/PPEM454/archive/refs/heads/main.zip"
+)
+# Load the package in each new R session
+library(ViralExamR)
+
+```
+
+
+#### Some of the functions in the exam
+```r
 
 # After installing locally with R CMD INSTALL /path/to/ViralExamR:
 library(PPEM454) # to load the commands for the exam
