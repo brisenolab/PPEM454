@@ -17,11 +17,16 @@ Word submissions without accessible version history will not be graded.
 **Do not use AI tools to complete any part of this exam.**
 
 ```r
-install.packages("devtools")
-library("devtools")
-# Installing hoboR through devtools
-devtools::install_github("brisenolab/PPEM454")
-library(PPEM454)
+
+# Install pak (only needed once)
+install.packages("pak")
+
+# Install the package from GitHub
+pak::pak("brisenolab/PPEM454")
+
+# Load the package in each new R session
+library(ViralExamR)
+
 
 # After installing locally with R CMD INSTALL /path/to/ViralExamR:
 library(PPEM454) # to load the commands for the exam
