@@ -11,7 +11,7 @@
 install.packages("pak")
 
 # Install the package from GitHub
-pak::pak("brisenolab/PPEM454")
+pak::pak("brisenolab/PPEM454", dependencies = T)
 
 # Load the package in each new R session
 library(ViralExamR)
@@ -74,6 +74,10 @@ print(round(identity_matrix, 2))
 # or 
 View(identity_matrix)
 
+# Extract unique pairwise identities
+pairwise <- identity_matrix[upper.tri(identity_matrix)]
+
+mean(pairwise)
 ##@@ QUESTION
 # The overall is the mean of pairwise identities. 
 # For each pair calculated, gaps and ambiguous symbols are excluded. 

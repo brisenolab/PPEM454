@@ -14,7 +14,7 @@ library(ggplot2)
 library(tidyr)
 
 # 1. Choose a seed number: more than 4 random numbers 
-# Q1. Write down your seed number: _________________
+# Q0. Write down your seed number: _________________
 seed =  999 # after equal, type those random numbers
 
 # 2. Create incidence matrix for viruses (as rows), samples (as columns)
@@ -23,7 +23,7 @@ inc_matrix
 
 # 3. Calculate the total abundance for each virus
 rowSums(inc_matrix)
-# Q2. What does total abundance by sample represent?
+# Q1. What does total abundance by sample represent?
 # Write your response:_____________________________________________________
 #__________________________________________________________________________
 #__________________________________________________________________________
@@ -34,7 +34,7 @@ community <- t(inc_matrix) # transpose matrix
 # 2. Calculate Richness and alpha diversities
 Richness <- specnumber(community)
 Richness
-# Q3. What is the richness for each sample? What sample has the highest and 
+# Q2. What is the richness for each sample? What sample has the highest and 
 # lowest richness? Overall what does this suggest?
 # Write your response:_____________________________________________________
 #__________________________________________________________________________
@@ -47,7 +47,7 @@ Richness
 
 Shannon <- diversity(community, index = "shannon")
 Shannon
-# Q4. What is the Shannon diversity index for each sample? What sample has 
+# Q3. What is the Shannon diversity index for each sample? What sample has 
 # the highest and lowest richness? Overall, what does this suggest?
 # Write your response:_____________________________________________________
 #__________________________________________________________________________
@@ -60,7 +60,7 @@ Shannon
 
 Simpson <-  diversity(community, index = "simpson")
 Simpson
-# Q5. What is the Simpson diversity index for each sample? What sample has 
+# Q4. What is the Simpson diversity index for each sample? What sample has 
 # the highest and lowest richness? Overall, what does this suggest?
 # Write your response:_____________________________________________________
 #__________________________________________________________________________
@@ -73,7 +73,7 @@ Simpson
 
 Inverse_Simpson <-  diversity(community, index = "invsimpson")
 Inverse_Simpson
-# Q6. What is the Inverse Simpson diversity index for each sample? What sample 
+# Q5. What is the Inverse Simpson diversity index for each sample? What sample 
 # has the highest and lowest richness? Overall, what does this suggest?
 # Write your response:_____________________________________________________
 #__________________________________________________________________________
@@ -253,7 +253,7 @@ percent <- 100 * npcoa$eig / sum(npcoa$eig[npcoa$eig > 0])
   text(npcoa$points, labels = rownames(community), pos = 2,  cex = 0.9)
 }
 
-# Q10. Can you notice a difference with the new dissimilarity index?
+# Q11. Can you notice a difference with the new dissimilarity index?
 # Yes or No?
 # What did it change:_____________________________________________________
 #__________________________________________________________________________

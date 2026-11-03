@@ -1,0 +1,322 @@
+---
+title: "Midterm Exam II — Part 2"
+author: "PPEM 454 — Viral Ecology"
+date: ""
+output:
+  pdf_document:
+    latex_engine: pdflatex
+    keep_tex: false
+    fig_caption: true
+geometry: margin=0.8in
+fontsize: 10pt
+params:
+  seed: 3845
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE,
+                      fig.width=7, fig.height=4.5, out.width='95%')
+```
+
+**Name:** \rule{3in}{0.35pt}  **Date:** \rule{1.5in}{0.35pt}
+
+**Workflow:** Incidence matrix, alpha diversity, beta diversity, ordination, and viral community composition.
+
+**Before knitting:** Install `ViralExamR`, `vegan`, `ggplot2`, and `tidyr` in the R console. The seed can be changed in the YAML header.
+
+## 1. Load packages and choose a seed
+
+```{r libraries}
+library(ViralExamR)
+library(vegan)
+library(ggplot2)
+library(tidyr)
+seed <- params$seed
+```
+
+**Q1. Write down your seed number (at least 4 digits).**
+
+\rule{\linewidth}{0.35pt} # 3 8 4 5
+
+## 2. Create the virus incidence matrix
+
+```{r incidence}
+inc_matrix <- create_incidence_matrix(10, 8, seed = seed)
+inc_matrix
+
+# 3. Calculate the total abundance for each virus
+rowSums(inc_matrix)
+community <- t(inc_matrix)  # vegan: samples in rows, taxa in columns
+```
+
+**Q2. What does total abundance by sample represent?**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+## 3. Alpha diversity
+
+```{r richness}
+Richness <- specnumber(community)
+Richness
+```
+
+**Q3. What is richness for each sample? Which has highest and lowest richness? What does this suggest?**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+```{r shannon}
+Shannon <- diversity(community, index = "shannon")
+Shannon
+```
+
+**Q4. What is the Shannon index for each sample? Which samples have the highest and lowest diversity? Interpret.**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+```{r simpson}
+Simpson <-  diversity(community, index = "simpson")
+Simpson
+```
+
+**Q5. What is the Simpson diversity index for each sample? Which have the highest and lowest diversity? Interpret.**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+```{r inverse-simpson}
+Inverse_Simpson <-  diversity(community, index = "invsimpson")
+Inverse_Simpson
+```
+
+**Q6. What is the inverse Simpson index for each sample? Which have the highest and lowest diversity? Interpret.**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+```{r evenness}
+Evenness <- ifelse(Richness > 1, Shannon / log(Richness), NA_real_)
+Evenness
+```
+
+**Q6 (Evenness). What is Pielou’s evenness for each sample? Which has highest and lowest evenness? Interpret.**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+## 4. Summary and alpha-diversity plots
+
+```{r alpha-table}
+Alpha_diversity_results <- data.frame(
+  Sample = rownames(community),
+  Abundance = rowSums(community),
+  # vegan package using diversity() function 
+  Richness = Richness,
+  Shannon = Shannon,
+  Simpson = Simpson,
+  Inverser_Simpson = Inverse_Simpson,
+  Evenness = Evenness,
+  row.names = NULL
+)
+print(Alpha_diversity_results)
+```
+
+```{r alpha-plot, fig.height=5}
+boxplot(
+  Richness,
+  Shannon,
+  Simpson,
+  Inverse_Simpson,
+  Evenness,
+  names = c("Richness", "Shannon", "Simpson", "Inverse Simpson", "Evennes"),
+  ylab = "Index value",
+  main = "Viral alpha diversity",
+  col = c("lightblue", "lightgreen", "salmon", "khaki", "gray")
+)
+```
+
+**Q7. Write a figure caption suitable for a scientific paper describing the alpha-diversity figure.**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+## 5. Beta diversity: Bray–Curtis
+
+```{r bray}
+bray <- vegdist(community, method = "bray")
+bray_matrix <- as.matrix(bray)
+
+# Remove self-comparisons (distance to itself = 0)
+diag(bray_matrix) <- NA
+bray_matrix
+```
+
+**Q8. What is Bray–Curtis dissimilarity? Which sample pairs have the highest and lowest dissimilarity? Interpret.**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+## 6. Principal Coordinates Analysis (PCoA)
+
+```{r pcoa, fig.height=5}
+pcoa <- cmdscale(bray, k = 2, eig = TRUE, add = TRUE)
+
+# Percentage of variation represented by each axis
+percent <- 100 * pcoa$eig / sum(pcoa$eig[pcoa$eig > 0])
+
+# Base R plot
+{plot(pcoa$points,  pch = 19, 
+     col = c("lightblue","lightgreen", "salmon", "khaki", "purple",  
+             "orange", "blue4", "red3"),
+     cex = 1.5, asp = 1,
+     xlab = paste0("PCoA 1 (", round(percent[1], 1), "%)"),
+     ylab = paste0("PCoA 2 (", round(percent[2], 1), "%)"),
+     main = "PCoA of viral communities")
+text(pcoa$points, labels = rownames(community), pos = 2,  cex = 0.9)
+}
+```
+
+**Q9. Describe the ordination patterns. Which samples cluster together, and which appear most different?**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+## 7. Viral community composition
+
+```{r composition, fig.width=8, fig.height=5}
+relative_abundance <- decostand(community, method = "total")
+# format data matrix 
+composition <- data.frame(Sample = rownames(relative_abundance),
+                          relative_abundance, check.names = FALSE )
+# transform data matrix to a long table to be compatible with ggplot
+composition_long <- pivot_longer(composition, cols = -Sample, 
+                                 names_to = "Virus", values_to = "Proportion")
+# plot the community compositio
+ggplot(composition_long, aes(x = Sample, y = Proportion, fill = Virus))+
+  geom_col(width = 0.7) +
+  scale_y_continuous(labels = function(x) paste0(round(100 * x), "%"),
+                     expand = expansion(mult = c(0, 0))) +
+  scale_fill_manual(values = c("virus1" = "#4477AA", "virus2" = "#EEAA33",
+                               "virus3" = "#228833","virus4" = "#AA3377",
+                               "virus5"  = "#66CCEE", "virus6"  = "#CC6677",
+                               "virus7"  = "#AA4499", "virus8"  = "#999933",
+                               "virus9"  = "#44AA99", "virus10" = "#882255"))+
+  labs(title="Viral community composition", x="Samples", y="Relative abundance", 
+       fill="Virus")+
+  theme_minimal(base_size = 13) +
+  theme(panel.grid.major.x = element_blank())
+```
+
+**Q10. Describe the community-composition patterns and how they relate to the ordination.**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+<!-- ## Bonus. Alternative beta-diversity index -->
+
+<!-- Choose another `vegan::vegdist()` method and replace the placeholder below. This exercise is **not evaluated during knitting** until you select a valid index and change `eval=FALSE` to `eval=TRUE`. -->
+
+<!-- ```{r bonus, eval=FALSE} -->
+<!-- other_index <- vegdist(community, method = "YOUR_INDEX") -->
+<!-- other_index_matrix <- as.matrix(other_index) -->
+
+<!-- # Remove self-comparisons (distance to itself = 0) -->
+<!-- diag(other_index_matrix) <- NA -->
+<!-- other_index_matrix -->
+
+<!-- # Calculating the Principal Components Analysis -->
+<!-- npcoa <- cmdscale(other_index, k = 2, eig = TRUE, add = TRUE) -->
+
+<!-- # Percentage of variation represented by each axis -->
+<!-- new_percent <- 100 * npcoa$eig / sum(npcoa$eig[npcoa$eig > 0]) -->
+
+<!-- # Base R plot -->
+<!-- {plot(npcoa$points,  pch = 19,  -->
+<!--       col = c("lightblue","lightgreen", "salmon", "khaki", "purple",   -->
+<!--               "orange", "blue4", "red3"), -->
+<!--       cex = 1.5, asp = 1, -->
+<!--       xlab = paste0("PCoA 1 (", round(new_percent[1], 1), "%)"), -->
+<!--       ylab = paste0("PCoA 2 (", round(new_percent[2], 1), "%)"), -->
+<!--       main = "PCoA of viral communities") -->
+<!--   text(npcoa$points, labels = rownames(community), pos = 2,  cex = 0.9) -->
+<!-- } -->
+<!-- ``` -->
+
+<!-- **Bonus. What changes when you use a different dissimilarity index?** -->
+
+<!-- \rule{\linewidth}{0.35pt} -->
+
+<!-- \rule{\linewidth}{0.35pt} -->
+
+<!-- \rule{\linewidth}{0.35pt} -->
+
+<!-- \rule{\linewidth}{0.35pt} -->
+

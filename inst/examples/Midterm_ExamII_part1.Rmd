@@ -1,0 +1,257 @@
+---
+title: "Midterm Exam II — Part 1"
+author: "PPEM 454 — Viral Ecology"
+date: ""
+output:
+  pdf_document:
+    latex_engine: pdflatex
+    keep_tex: false
+    fig_caption: true
+geometry: margin=0.8in
+fontsize: 10pt
+params:
+  host: "plant"
+  alignment_method: "ClustalW"
+  nj_model: "JC69"
+  k: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE,
+                      fig.width=7, fig.height=4.5, out.width='95%')
+```
+
+**Name:** \rule{3in}{0.35pt}  **Date:** \rule{1.5in}{0.35pt}
+
+**Workflow:** Host selection, sequences, alignment, similarity, phylogenetics, and k-mers.
+
+**Before knitting:** Install `ViralExamR`, `ape`, and `phangorn` in the R console, not in this document. Select the desired host by editing `params: host:` in the YAML header; valid values depend on `ViralExamR::get_sequences()`. The interactive `choose_host()` menu cannot run during knitting.
+
+## 1. Load packages
+
+```{r libraries}
+library(ViralExamR)
+library(ape)
+library(phangorn)
+```
+
+## 2. Choose a host and load sequences
+
+**Q0. Write your selected host.**
+
+\rule{\linewidth}{0.35pt}
+
+```{r sequences}
+host <- "plant" # Set in YAML: plant, fungus, bacteria, animal, or human
+sequences <- get_sequences(host)
+print(data.frame(sequence = names(sequences), length = nchar(sequences)))
+```
+
+## 3. Align and inspect sequences
+
+Choose an alignment method: `ClustalW`, `ClustalOmega`, or `Muscle`.
+
+```{r alignment}
+alignment <- align_sequences(sequences, method = params$alignment_method)
+print(alignment)
+```
+
+## 4. Pairwise sequence identity
+
+```{r identity}
+# Convert aligned sequences to ape's DNAbin format
+alignment_matrix <- do.call(
+  rbind,
+  strsplit(chartr("U", "T", toupper(alignment)), "", fixed = TRUE)
+)
+dna <- ape::as.DNAbin(alignment_matrix)
+# Raw distance is the proportion of differing bases.
+raw_distances <- ape::dist.dna(
+  dna,
+  model = "raw",
+  pairwise.deletion = TRUE
+)
+# Convert it to percentage identity; exclude gaps/ambiguities pairwise.
+identity_matrix <- 100 * (1 - as.matrix(raw_distances))
+diag(identity_matrix) <- 100
+
+# Here are the pairwise sequence identity results
+print(round(identity_matrix, 2))
+```
+
+The overall identity is the mean of pairwise identities. Gaps and ambiguous positions are excluded pairwise in the supplied calculation.
+
+**Q1. What is the overall pairwise identity? Use `mean()`.**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+**Q2. Which pair is most and least similar, and what percentage identity do they share?**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+## 5. Neighbor-Joining tree
+
+Select an evolutionary distance model, for example `RAW`, `JC69`, or `K80`.
+
+```{r nj, fig.height=5}
+distances <- ape::dist.dna(dna, model = params$nj_model, pairwise.deletion = FALSE)
+# review the evolutionary distances
+print(round(as.matrix(distances), 4))
+
+# Calculate Neighbor-Joining tree
+tree_nj <- ape::nj(distances)
+# Plot Neighbor-Joining tree
+plot(tree_nj, type = "phylogram", cex = 0.9,
+     main = paste("Neighbor-Joining tree:", host, "virus"))
+ape::add.scale.bar()
+```
+
+## 6. Maximum-Likelihood tree
+
+```{r ml, fig.height=5}
+phy_data <- phangorn::phyDat(dna, type = "DNA")
+# Calculate Neighbor-Joining tree
+fit <- phangorn::pml(tree_nj, data = phy_data)
+fit_ml <- phangorn::optim.pml(fit, model = "GTR", optNni = TRUE,
+                              optBf = FALSE, optQ = FALSE,
+                              optGamma = FALSE, optInv = FALSE)
+tree_ml <- fit_ml$tree
+# Plot Maximum-Likelihood tree
+plot(tree_ml, type = "phylogram", main = paste("Maximum-Likelihood tree:", host, "virus"))
+```
+
+**Q4. Do the most similar sequences cluster together?**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+**Q5. Are the tree topologies from NJ and ML identical? Why?**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+**Q6. What happens if you change the evolutionary model in NJ and ML?**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+**Q7. Do you notice a change in branch lengths? Why?**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+## 7. Bootstrapping
+
+The following implements the original 100-replicate procedure. **Note:** It generates NJ bootstrap trees (K80) and maps their bipartition support onto the ML reference topology; it is not an ML bootstrap.
+
+```{r bootstrap, fig.height=5}
+bsml <- ape::boot.phylo(
+  phy = tree_ml,
+  x = dna,
+  FUN = function(x) {
+    ape::nj(ape::dist.dna(x, model = "K80"))
+  },
+  B = 100,
+  trees = TRUE
+)
+# Plot ML tree with bootstrap support
+plot(
+  tree_ml,
+  main = "Maximum-Likelihood phylogeny",
+  edge.width = 2,
+  cex = .8
+)
+# Add bootstrap support
+ape::nodelabels(
+  text = bsml$BP,
+  node = (Ntip(tree_ml) + 1):(Ntip(tree_ml) + tree_ml$Nnode),
+  frame = "none",
+  cex = 0.7,
+  adj = c(-0.2, -0.2),
+  col = "red"
+)
+ape::add.scale.bar()
+```
+
+**Q8. What is bootstrap support, and what do the support values on your tree mean?**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+**Q9. How would you interpret low bootstrap support?**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+## 8–9. k-mers
+
+Select the two most divergent sequences using the identity matrix and compare their k-mer profiles (`k = 3` by default). Edit the selected indices if needed.
+
+```{r kmers, fig.width=8, fig.height=5}
+k <- params$k
+# Choose the most divergent pair automatically from the pairwise matrix.
+pairwise_id <- identity_matrix
+pairwise_id[lower.tri(pairwise_id, diag = TRUE)] <- Inf
+selected_pair <- arrayInd(which.min(pairwise_id), dim(pairwise_id))
+selected_pair
+kmers_spp <- count_kmers(sequences[as.vector(selected_pair)], k)
+a <- kmers_spp[[1]]
+b <- kmers_spp[[2]]
+
+# Align k-mers and replace missing counts with zero
+kmers <- sort(union(names(a), names(b)))
+counts <- rbind(a[kmers], b[kmers])
+counts[is.na(counts)] <- 0
+
+# Plotting k-mer sizing between a pair of sequences
+barplot(
+  counts,
+  beside = TRUE,
+  names.arg = kmers,
+  col = c("steelblue", "orange"),
+  las = 2,
+  cex.names = 0.6,
+  ylab = "Count",
+  legend.text = c(names(kmers_spp[1]), names(kmers_spp[2])),
+  args.legend = list(cex = 0.7)
+)
+# Jaccard similarity of k-mer *presence* (not frequencies).
+similarity <- length(intersect(names(a)[a > 0], names(b)[b > 0])) /
+  length(union(names(a)[a > 0], names(b)[b > 0]))
+similarity * 100
+```
+
+**Q10. Would k-mer comparisons between two or more viral isolates reflect sequence differences? Explain.**
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
+\rule{\linewidth}{0.35pt}
+
